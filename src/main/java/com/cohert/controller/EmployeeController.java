@@ -1,11 +1,14 @@
 package com.cohert.controller;
 
+import com.cohert.advice.exception.ResourceNotFoundException;
 import com.cohert.dto.EmployeeDTO;
 import com.cohert.service.EmployeeService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -22,12 +25,19 @@ public class EmployeeController {
         return "getting data from get method";
     }
 
-    @GetMapping(path="/empid")
-    public EmployeeDTO getEmployeeId(@PathVariable Long empid){
-        return employeeService.getEmployeeById(empid);
+//    @GetMapping(path="/empid")
+//    public EmployeeDTO getEmployeeId(@PathVariable Long empid){
+//        return employeeService.getEmployeeById(empid);
+//
+//    }
+//
+    @GetMapping(path="/emid/{empid}")
+    public ResponseEntity<EmployeeDTO> employeeid (@PathVariable Long empid){
+        Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(empid);
+        return employeeDTO
+                .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
+                .orElseThrow(()-> new ResourceNotFoundException("employee not found"));
     }
-
-
 
     @GetMapping("/allemp")
     public List<EmployeeDTO> getAllEmployee( ){
